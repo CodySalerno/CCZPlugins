@@ -70,7 +70,7 @@ public class CraftingPlugin extends Plugin
         }
         if (timeout <= 0)
         {
-            if (Inventory.getItemAmount(leather) == 0 && currentLevel < 20)
+            if (Inventory.getItemAmount(leather) == 0 && Inventory.getItemAmount(sapphireId) == 0 && Inventory.getItemAmount(emeraldId) == 0)
             {
                 bank();
             }
