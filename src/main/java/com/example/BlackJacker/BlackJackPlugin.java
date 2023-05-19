@@ -4,7 +4,7 @@ import com.example.InteractionApi.InventoryInteraction;
 import com.example.InteractionApi.NPCInteraction;
 import com.example.InteractionApi.TileObjectInteraction;
 import com.example.Packets.*;
-import com.example.WidgetInfoExtended;
+import com.example.PacketUtils.WidgetInfoExtended;
 import com.google.inject.Inject;
 import com.google.inject.spi.BindingScopingVisitor;
 import lombok.SneakyThrows;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
                 enabledByDefault = false
         )
 @PluginDependency(EthanApiPlugin.class)
-@PluginDependency(com.example.PacketUtilsPlugin.class)
+@PluginDependency(com.example.PacketUtils.PacketUtilsPlugin.class)
 public class BlackJackPlugin extends Plugin
 {
     @Inject

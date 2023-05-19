@@ -1,11 +1,11 @@
 package com.example.BlastFurnaceRunite;
 import com.example.EthanApiPlugin.*;
 import com.example.InteractionApi.*;
-import com.example.PacketUtilsPlugin;
+import com.example.PacketUtils.PacketUtilsPlugin;
 import com.example.Packets.MousePackets;
 import com.example.Packets.MovementPackets;
 import com.example.Packets.WidgetPackets;
-import com.example.WidgetInfoExtended;
+import com.example.PacketUtils.WidgetInfoExtended;
 import com.google.common.primitives.Shorts;
 import com.google.inject.Inject;
 import lombok.SneakyThrows;

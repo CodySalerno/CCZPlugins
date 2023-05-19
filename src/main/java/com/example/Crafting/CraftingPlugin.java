@@ -75,7 +75,7 @@ public class CraftingPlugin extends Plugin
         if (Inventory.getItemAmount(leather) > 0)
         {
             MousePackets.queueClickPacket();
-            WidgetPackets.queueWidgetOnWidget();
+            //WidgetPackets.queueWidgetOnWidget();
         }
     }
 
