@@ -4,6 +4,7 @@ import com.example.EthanApiPlugin.EthanApiPlugin;
 import com.example.EthanApiPlugin.Inventory;
 import com.example.EthanApiPlugin.TileObjects;
 import com.example.InteractionApi.BankInteraction;
+import com.example.InteractionApi.BankInventoryInteraction;
 import com.example.InteractionApi.TileObjectInteraction;
 import com.example.PacketUtils.PacketDef;
 import com.example.PacketUtils.PacketReflection;
@@ -11,10 +12,7 @@ import com.example.Packets.MousePackets;
 import com.example.Packets.WidgetPackets;
 import com.google.inject.Inject;
 import lombok.SneakyThrows;
-import net.runelite.api.Client;
-import net.runelite.api.ItemID;
-import net.runelite.api.Skill;
-import net.runelite.api.TileObject;
+import net.runelite.api.*;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
@@ -42,15 +40,13 @@ public class CraftingPlugin extends Plugin
     int targetLevel = 31;
     int emeraldId = ItemID.UNCUT_EMERALD;
     int sapphireId = ItemID.UNCUT_SAPPHIRE;
-    int leatherBodyId = ItemID.LEATHER_BODY;
-    int leatherVambracesId = ItemID.LEATHER_VAMBRACES;
-    int leatherCowlId= ItemID.LEATHER_COWL;
-    int leatherBootsId = ItemID.LEATHER_BOOTS;
-    int leatherGlovesId = ItemID.LEATHER_GLOVES;
     int leather = ItemID.LEATHER;
     int timeout = 0;
     int levelToBreak = 99;
     boolean needleWithdrawn = false;
+    boolean chiselWithdrawn = false;
+    int[] leatherIds = {ItemID.LEATHER_GLOVES, ItemID.LEATHER_BOOTS, ItemID.LEATHER_COWL, ItemID.LEATHER_VAMBRACES, ItemID.LEATHER_BODY};
+    int[] reqLevels = {1,7,9,11,14};
 
 
     @Override
@@ -60,6 +56,7 @@ public class CraftingPlugin extends Plugin
         needleWithdrawn = false;
         timeout = 0;
         levelToBreak = 99;
+        chiselWithdrawn = false;
     }
 
     @Subscribe
@@ -67,12 +64,16 @@ public class CraftingPlugin extends Plugin
     {
         currentLevel = client.getRealSkillLevel(Skill.CRAFTING);
         timeout--;
-        if (levelToBreak <= client.getRealSkillLevel(Skill.CRAFTING))
+        if (levelToBreak <= currentLevel)
         {
             timeout = 0;
         }
         if (timeout <= 0)
         {
+            if (Inventory.getItemAmount(leather) == 0 && currentLevel < 20)
+            {
+                bank();
+            }
             if (currentLevel >= 31)
             {
                 EthanApiPlugin.stopPlugin(this);
@@ -85,32 +86,133 @@ public class CraftingPlugin extends Plugin
             {
                 gems(sapphireId, 27);
             }
-            if (currentLevel >= 14)
-            {
-                leather(leatherBodyId, 20);
-            }
-            else if (currentLevel >= 11)
-            {
-                leather(leatherVambracesId, 14);
-            }
-            else if (currentLevel >= 9)
-            {
-                leather(leatherCowlId, 11);
-            }
-            else if (currentLevel >= 7)
-            {
-                leather(leatherBootsId, 9);
-            }
             else
             {
-                leather(leatherGlovesId,7 );
+                int x = 0;
+                for (int i = 0; i < reqLevels.length; i++)
+                {
+                    if (reqLevels[i] <= currentLevel)
+                        x = i;
+                }
+                if (x == reqLevels.length-1)
+                {
+                    leather(x, 20);
+                }
+
+                else
+                    leather(x, reqLevels[x+1]);
             }
         }
     }
 
     public void gems(int id, int levelBreak)
     {
+        levelToBreak = levelBreak;
+        if (Inventory.getItemAmount(ItemID.CHISEL) == 0)
+        {
+            TileObject bank = TileObjects.search().withId(10060).first().orElse(null);
+            if (bank != null)
+            {
+                if (client.getWidget(WidgetInfo.BANK_CONTAINER) == null)
+                {
+                    TileObjectInteraction.interact(bank, "Bank");
+                    timeout = 3;
+                    return;
+                }
+                else
+                {
+                    if (chiselWithdrawn)
+                    {
+                        if (Inventory.getItemAmount(ItemID.CHISEL)== 0)
+                        {
+                            System.out.println("No chisel in bank closing plugin");
+                            EthanApiPlugin.stopPlugin(this);
+                        }
+                    }
+                    System.out.println("Withdrawing chisel");
+                    BankInteraction.useItem(ItemID.CHISEL, "Withdraw-1");
+                    chiselWithdrawn = true;
+                    timeout = 2;
+                    return;
+                }
+            }
+            else
+            {
+                System.out.print("Not near bank and need supplies closing plugin.");
+            }
+        }
+        if (Inventory.getItemAmount(id) > 0)
+        {
+            Widget chisel = Inventory.search().withId(ItemID.CHISEL).first().orElse(null);
+            Widget gem = Inventory.search().withId(id).first().orElse(null);
+            if (chisel != null && gem != null)
+            {
+                MousePackets.queueClickPacket();
+                WidgetPackets.queueWidgetOnWidget(chisel, gem);
+                timeout = 1;
+                //timeout = (Inventory.getItemAmount(leather) * 3)+1;
+            }
+            Widget npcDialogOptions = client.getWidget(270, 2);
+            if (npcDialogOptions != null)
+            {
+                Widget productWidget = client.getWidget(270,14);
+                int gemAmount = Inventory.getItemAmount(id);
+                MousePackets.queueClickPacket();
+                WidgetPackets.queueResumePause(productWidget.getId(), gemAmount);
+                System.out.println("started crafting gems.");
+                timeout = gemAmount*2+3;
+            }
+        }
+    }
 
+    public void bank()
+    {
+        boolean gems = currentLevel >= 20;
+        TileObject bank = TileObjects.search().withId(10060).first().orElse(null);
+        if (bank != null)
+        {
+            if (client.getWidget(WidgetInfo.BANK_CONTAINER) == null)
+            {
+                TileObjectInteraction.interact(bank, "Bank");
+                timeout = 3;
+                return;
+            }
+            else
+            {
+                if (!gems)
+                {
+                    System.out.println("banking leather goods.");
+                    for (int i : leatherIds)
+                    {
+                        BankInventoryInteraction.useItem(i, "Deposit-all");
+                    }
+                    BankInteraction.useItem(leather, "Withdraw-all");
+                    timeout = 2;
+                    return;
+                }
+                else
+                {
+                    System.out.println("banking gems goods.");
+                    BankInventoryInteraction.useItem(ItemID.SAPPHIRE, "Deposit-all");
+                    BankInventoryInteraction.useItem(ItemID.EMERALD, "Deposit-all");
+                    if (currentLevel < 27)
+                    {
+                        BankInteraction.useItem(ItemID.UNCUT_SAPPHIRE, "Withdraw-all");
+                    }
+                    else
+                    {
+                        BankInteraction.useItem(ItemID.EMERALD, "Withdraw-all");
+                    }
+                    timeout = 2;
+                    return;
+                }
+
+            }
+        }
+        else
+        {
+            System.out.print("Not near bank and need supplies closing plugin.");
+        }
     }
 
     public void leather(int id, int levelBreak)
@@ -154,7 +256,7 @@ public class CraftingPlugin extends Plugin
         if (Inventory.getItemAmount(leather) > 0)
         {
             Widget needle = Inventory.search().withId(ItemID.NEEDLE).first().orElse(null);
-            Widget leatherWidget = Inventory.search().withId(ItemID.LEATHER).first().orElse(null);
+            Widget leatherWidget = Inventory.search().withId(leather).first().orElse(null);
             if (needle != null && leatherWidget != null)
             {
                 MousePackets.queueClickPacket();
@@ -165,13 +267,12 @@ public class CraftingPlugin extends Plugin
             Widget npcDialogOptions = client.getWidget(270, 2);
             if (npcDialogOptions != null)
             {
-                Widget gloves = client.getWidget(270,14);
-                int leatherAmount = Inventory.getItemAmount(ItemID.LEATHER);
+                Widget productWidget = client.getWidget(270,14+id);
+                int leatherAmount = Inventory.getItemAmount(leather);
                 MousePackets.queueClickPacket();
-                WidgetPackets.queueResumePause(gloves.getId(), leatherAmount);
+                WidgetPackets.queueResumePause(productWidget.getId(), leatherAmount);
                 System.out.println("started crafting.");
                 timeout = leatherAmount*3+5;
-                return;
             }
         }
     }
