@@ -201,7 +201,7 @@ public class CraftingPlugin extends Plugin
                     }
                     else
                     {
-                        BankInteraction.useItem(ItemID.EMERALD, "Withdraw-all");
+                        BankInteraction.useItem(ItemID.UNCUT_EMERALD, "Withdraw-all");
                     }
                     timeout = 2;
                     return;
