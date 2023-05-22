@@ -1,8 +1,8 @@
 package com.example.Crafting;
 
 import com.example.EthanApiPlugin.EthanApiPlugin;
-import com.example.EthanApiPlugin.Inventory;
-import com.example.EthanApiPlugin.TileObjects;
+import com.example.EthanApiPlugin.Collections.Inventory;
+import com.example.EthanApiPlugin.Collections.TileObjects;
 import com.example.InteractionApi.BankInteraction;
 import com.example.InteractionApi.BankInventoryInteraction;
 import com.example.InteractionApi.TileObjectInteraction;
@@ -38,6 +38,8 @@ public class CraftingPlugin extends Plugin
     Client client;
     int currentLevel;
     int targetLevel = 31;
+    int diamondId = ItemID.UNCUT_DIAMOND;
+    int rubyId = ItemID.UNCUT_RUBY;
     int emeraldId = ItemID.UNCUT_EMERALD;
     int sapphireId = ItemID.UNCUT_SAPPHIRE;
     int leather = ItemID.LEATHER;
@@ -74,13 +76,21 @@ public class CraftingPlugin extends Plugin
             {
                 bank();
             }
-            if (currentLevel >= 31)
+            if (currentLevel >= 55)
             {
                 EthanApiPlugin.stopPlugin(this);
             }
+            else if (currentLevel >= 43)
+            {
+                gems(diamondId, 55);
+            }
+            else if (currentLevel >= 34)
+            {
+                gems(rubyId, 43);
+            }
             else if (currentLevel >= 27)
             {
-                gems(emeraldId, 31);
+                gems(emeraldId, 34);
             }
             else if (currentLevel >= 20)
             {
@@ -195,13 +205,23 @@ public class CraftingPlugin extends Plugin
                     System.out.println("banking gems goods.");
                     BankInventoryInteraction.useItem(ItemID.SAPPHIRE, "Deposit-all");
                     BankInventoryInteraction.useItem(ItemID.EMERALD, "Deposit-all");
+                    BankInventoryInteraction.useItem(ItemID.RUBY, "Deposit-all");
+                    BankInventoryInteraction.useItem(ItemID.DIAMOND, "Deposit-all");
                     if (currentLevel < 27)
                     {
                         BankInteraction.useItem(ItemID.UNCUT_SAPPHIRE, "Withdraw-all");
                     }
-                    else
+                    else if (currentLevel < 34)
                     {
                         BankInteraction.useItem(ItemID.UNCUT_EMERALD, "Withdraw-all");
+                    }
+                    else if (currentLevel < 43)
+                    {
+                        BankInteraction.useItem(ItemID.UNCUT_RUBY, "Withdraw-all");
+                    }
+                    else
+                    {
+                        BankInteraction.useItem(ItemID.UNCUT_DIAMOND, "Withdraw-all");
                     }
                     timeout = 2;
                     return;

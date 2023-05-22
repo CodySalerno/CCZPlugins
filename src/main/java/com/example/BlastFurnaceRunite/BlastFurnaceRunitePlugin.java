@@ -1,5 +1,6 @@
 package com.example.BlastFurnaceRunite;
 import com.example.EthanApiPlugin.*;
+import com.example.EthanApiPlugin.Collections.*;
 import com.example.InteractionApi.*;
 import com.example.PacketUtils.PacketUtilsPlugin;
 import com.example.Packets.MousePackets;
@@ -24,6 +25,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+
 
 import javax.swing.*;
 import javax.swing.text.html.Option;

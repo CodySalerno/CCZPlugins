@@ -1,6 +1,8 @@
 package com.example.WidgetFinder;
 
 import com.example.EthanApiPlugin.*;
+import com.example.EthanApiPlugin.Collections.TileObjects;
+import com.example.InteractionApi.TileObjectInteraction;
 import com.example.PacketUtils.PacketUtilsPlugin;
 import com.example.Packets.MousePackets;
 import com.example.Packets.WidgetPackets;
@@ -26,9 +28,9 @@ import java.util.stream.Collectors;
 
 @PluginDescriptor(
         name = "Find Widget",
-        description = "",
+        description = "widget tested",
         enabledByDefault = false,
-        tags = {"Sal"}
+        tags = {"sal"}
 )
 @PluginDependency(PacketUtilsPlugin.class)
 @PluginDependency(EthanApiPlugin.class)
@@ -47,14 +49,7 @@ public class WidgetFinder extends Plugin
     @Subscribe
     public void onGameTick(GameTick e)
     {
-        Widget npcDialogOptions = client.getWidget(270, 13);
-        if (npcDialogOptions != null)
-        {
-            MousePackets.queueClickPacket();
-            WidgetPackets.queueResumePause(176947420, 14);
-            System.out.println("270,14 exists");
-        }
-        EthanApiPlugin.stopPlugin(this);
+        System.out.println(client.getLocalPlayer().getAnimation());
 
     }
 

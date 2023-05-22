@@ -1,5 +1,8 @@
 package com.example.NexFight;
 import com.example.EthanApiPlugin.*;
+import com.example.EthanApiPlugin.Collections.Inventory;
+import com.example.EthanApiPlugin.Collections.NPCs;
+import com.example.EthanApiPlugin.Collections.TileObjects;
 import com.example.InteractionApi.InventoryInteraction;
 import com.example.InteractionApi.TileObjectInteraction;
 import com.example.PacketUtils.PacketUtilsPlugin;
@@ -27,8 +30,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.EthanApiPlugin.QuickPrayer.PROTECT_FROM_MAGIC;
-import static com.example.EthanApiPlugin.QuickPrayer.PROTECT_FROM_MISSILES;
+import static com.example.EthanApiPlugin.Collections.query.QuickPrayer.PROTECT_FROM_MAGIC;
+import static com.example.EthanApiPlugin.Collections.query.QuickPrayer.PROTECT_FROM_MISSILES;
+
+//import static com.example.EthanApiPlugin.QuickPrayer.PROTECT_FROM_MAGIC;
+//import static com.example.EthanApiPlugin.QuickPrayer.PROTECT_FROM_MISSILES;
 
 @PluginDescriptor(
         name = "Nex",
