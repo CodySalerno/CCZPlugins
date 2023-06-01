@@ -6,6 +6,7 @@ import com.example.NexFight.NexPlugin;
 import com.example.PacketUtils.PacketUtilsPlugin;
 import com.example.PrayerTrainer.PrayerTrainerPlugin;
 import com.example.Skills.FiremakingPlugin;
+import com.example.Skills.NMZPlugin;
 import com.example.Skills.WoodcuttingPlugin;
 import com.example.WidgetFinder.WidgetFinder;
 import net.runelite.client.RuneLite;
@@ -15,7 +16,7 @@ public class ExamplePluginTest {
     public static void main(String[] args) throws Exception {
         ExternalPluginManager.loadBuiltin(EthanApiPlugin.class, PacketUtilsPlugin.class, NexPlugin.class,
                 CraftingPlugin.class, BlackJackPlugin.class, CraftingPlugin.class, PrayerTrainerPlugin.class,
-                WidgetFinder.class, WoodcuttingPlugin.class, FiremakingPlugin.class);
+                WidgetFinder.class, WoodcuttingPlugin.class, FiremakingPlugin.class, NMZPlugin.class);
         RuneLite.main(args);
     }
 }

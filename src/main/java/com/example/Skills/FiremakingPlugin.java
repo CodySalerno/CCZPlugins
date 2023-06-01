@@ -163,7 +163,7 @@ public class FiremakingPlugin extends Plugin
                 bank(mahogany);
             }
         }
-        if (client.getRealSkillLevel(Skill.WOODCUTTING) >= 55)
+        if (client.getRealSkillLevel(Skill.FIREMAKING) >= 55)
         {
             EthanApiPlugin.stopPlugin(this);
         }

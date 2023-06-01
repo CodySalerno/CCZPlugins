@@ -1,7 +1,9 @@
 package com.example.WidgetFinder;
 
 import com.example.EthanApiPlugin.*;
+import com.example.EthanApiPlugin.Collections.Inventory;
 import com.example.EthanApiPlugin.Collections.TileObjects;
+import com.example.EthanApiPlugin.Collections.Widgets;
 import com.example.InteractionApi.TileObjectInteraction;
 import com.example.PacketUtils.PacketUtilsPlugin;
 import com.example.Packets.MousePackets;
@@ -23,6 +25,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,7 +52,24 @@ public class WidgetFinder extends Plugin
     @Subscribe
     public void onGameTick(GameTick e)
     {
-        System.out.println(client.getLocalPlayer().getAnimation());
+
+        Optional<Widget> f = Widgets.search().withAction("Use").nameContains("Special Attack").first();
+        if (f.isPresent())
+        {
+            MousePackets.queueClickPacket();
+            WidgetPackets.queueWidgetAction(f.get(), "Use");
+            EthanApiPlugin.stopPlugin(this);
+        }
+        else
+        {
+            System.out.println("null");
+        }
+        /*
+        MousePackets.queueClickPacket();
+        WidgetPackets.queueWidgetAction(f, "Use");
+        EthanApiPlugin.stopPlugin(this);
+
+         */
 
     }
 
